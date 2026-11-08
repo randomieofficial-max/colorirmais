@@ -6,7 +6,7 @@ async def main():
         b=await p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--no-sandbox'])
         pg=await b.new_page(viewport={'width':1280,'height':860},accept_downloads=True)
         errs=[]; pg.on('pageerror',lambda e: errs.append(str(e))); pg.on('console',lambda m: errs.append(m.text) if m.type=='error' else None)
-        await pg.goto('http://127.0.0.1:8765/animais-brasileiros-para-colorir/capivara-fofo/',wait_until='networkidle')
+        await pg.goto(''+(sys.argv[2] if len(sys.argv)>2 else 'http://127.0.0.1:8765')+'/bandeiras-para-colorir/bandeira-do-brasil-para-colorir/',wait_until='networkidle')
         async with pg.expect_download() as d:
             await pg.click('[data-act=pdf]')
         dl=await d.value; path=Q+'/test.pdf'; await dl.save_as(path); print('pdf',dl.suggested_filename)
