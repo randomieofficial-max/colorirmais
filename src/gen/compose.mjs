@@ -225,7 +225,40 @@ function patternPages() {
   return out;
 }
 
+
+function brazilFlag() {
+  // Proportions 20:14. Width 900 -> unit m = 45. Rhombus 1.7m from edges, circle radius 3.5m.
+  const W = 900, H = 630, x0 = 50, y0 = 185, m = W / 20;
+  const cx = x0 + W / 2, cy = y0 + H / 2, r = 3.5 * m;
+  let s = rect(x0, y0, W, H, 0);
+  s += p(`M${f(x0 + 1.7 * m)} ${f(cy)} L${f(cx)} ${f(y0 + 1.7 * m)} L${f(x0 + W - 1.7 * m)} ${f(cy)} L${f(cx)} ${f(y0 + H - 1.7 * m)}Z`);
+  s += circ(cx, cy, r);
+  // white band: arc from left to right across the circle
+  const band = `M${f(cx - r * 0.985)} ${f(cy + r * 0.17)} Q${f(cx)} ${f(cy - r * 0.62)} ${f(cx + r * 0.94)} ${f(cy + r * 0.34)} L${f(cx + r * 0.9)} ${f(cy + r * 0.46)} Q${f(cx)} ${f(cy - r * 0.4)} ${f(cx - r * 0.995)} ${f(cy + r * 0.3)}Z`;
+  s += p(band);
+  // approximate star field (27 stars) below the band
+  const stars = [[0.0, 0.62, 13], [0.0, 0.42, 9], [-0.08, 0.52, 8], [0.1, 0.5, 8], [0.05, 0.72, 7], [-0.42, 0.42, 9], [-0.55, 0.28, 8], [-0.62, 0.48, 9], [-0.5, 0.6, 7], [-0.34, 0.56, 7],
+    [-0.72, 0.36, 7], [-0.25, 0.75, 9], [0.32, 0.38, 9], [0.45, 0.48, 8], [0.55, 0.36, 8], [0.62, 0.55, 7], [0.4, 0.66, 9], [0.28, 0.82, 8], [0.18, 0.62, 7], [-0.15, 0.32, 7],
+    [0.22, 0.24, 7], [0.48, 0.2, 8], [0.68, 0.22, 7], [-0.2, 0.9, 7], [0.1, 0.88, 7], [-0.62, 0.66, 7], [0.0, 0.16, 10]];
+  s += '<g stroke-width="2.6">';
+  for (const [dx, dy, sz] of stars) s += star(cx + dx * r, cy + dy * r * 0.95, sz * 1.5, sz * 0.62);
+  s += '</g>';
+  const motto = textInBox('ORDEM E PROGRESSO', cx - 4, cy - r * 0.08, cy + r * 0.08, r * 1.3, 40);
+  s += `<g transform="rotate(-13 ${f(cx)} ${f(cy + r * 0.02)})"><path d="${motto.d}" fill="#111" stroke="none"/></g>`;
+  return s;
+}
+function brazilPages() {
+  const flag = brazilFlag();
+  const title = textInBox('BRASIL', 500, 40, 160, 600, 160);
+  return [
+    { id: 'bf-brasil', slug: 'bandeira-do-brasil-para-colorir', cat: 'bandeiras', level: 'facil', age: '4-10', kind: 'bandeira', subject: 'Bandeira do Brasil', title: 'Bandeira do Brasil para colorir',
+      alt: 'Bandeira do Brasil para colorir com losango, círculo, estrelas e a faixa Ordem e Progresso', svg: svgDoc(outlined(title.d, ' stroke-width="7"') + flag, { sw: 7 }) },
+    { id: 'bf-brasil-moldura', slug: 'bandeira-do-brasil-com-moldura-para-colorir', cat: 'bandeiras', level: 'medio', age: '6-12', kind: 'bandeira', subject: 'Bandeira do Brasil', title: 'Bandeira do Brasil com moldura de estrelas para colorir',
+      alt: 'Bandeira do Brasil para colorir dentro de uma moldura de estrelas, ideal para o 7 de Setembro e a Copa', svg: svgDoc(FRAMES.estrelas() + `<g transform="translate(95 60) scale(0.81)">${flag}</g>` + outlined(textInBox('INDEPENDÊNCIA DO BRASIL', 500, 760, 860, 760, 90).d, ' stroke-width="5"'), { sw: 6 }) },
+  ];
+}
+
 export function originalPages() {
-  return [...artPages(), ...letterPages(), ...numberPages(), ...mandalaPages(), ...patternPages(), ...pixelPages()]
+  return [...artPages(), ...letterPages(), ...numberPages(), ...mandalaPages(), ...patternPages(), ...pixelPages(), ...brazilPages()]
     .map((pg) => ({ ...pg, source: 'original' }));
 }
