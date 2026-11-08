@@ -1,0 +1,9 @@
+node_modules/
+dist/
+cache/
+data/*.json
+!data/external.json
+data/*.log
+*.pyc
+__pycache__/
+.vercel
